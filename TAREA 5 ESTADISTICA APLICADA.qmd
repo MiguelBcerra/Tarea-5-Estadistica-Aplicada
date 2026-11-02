@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+```{r}
+# Parámetros de la distribución Beta(2, 5)
+alpha <- 2
+beta <- 5
+
+# Valores teóricos
+media_teorica <- alpha / (alpha + beta)
+var_teorica <- (alpha * beta) / (((alpha + beta)^2) * (alpha + beta + 1))
+
+# Tamaños de muestra de 100 a 10,000 (con incrementos de 50)
+tamanos <- seq(100, 10000, by = 50)
+
+# Simulación acumulativa para evaluar la convergencia
+set.seed(789) # Para reproducibilidad
+muestra_max <- rbeta(10000, shape1 = alpha, shape2 = beta)
+
+# Calcular media y varianza muestral según aumenta el tamaño de n
+medias_muestrales <- sapply(tamanos, function(n) mean(muestra_max[1:n]))
+varianzas_muestrales <- sapply(tamanos, function(n) var(muestra_max[1:n]))
+
+# 1. Gráfica de convergencia de la MEDIA MUESTRAL
+plot(tamanos, medias_muestrales, type = "l", col = "blue", lwd = 1.5,
+     main = "Convergencia de la Media Muestral a la Media Teórica",
+     xlab = "Tamaño de Muestra (n)", ylab = "Media Muestral")
+abline(h = media_teorica, col = "red", lty = 2, lwd = 2)
+legend("topright", legend = c("Media Muestral", "Media Teórica (2/7)"),
+       col = c("blue", "red"), lty = c(1, 2), lwd = c(1.5, 2))
+
+# 2. Gráfica de convergencia de la VARIANZA MUESTRAL
+plot(tamanos, varianzas_muestrales, type = "l", col = "darkgreen", lwd = 1.5,
+     main = "Convergencia de la Varianza Muestral a la Varianza Teórica",
+     xlab = "Tamaño de Muestra (n)", ylab = "Varianza Muestral")
+abline(h = var_teorica, col = "red", lty = 2, lwd = 2)
+legend("topright", legend = c("Varianza Muestral", "Varianza Teórica (10/392)"),
+       col = c("darkgreen", "red"), lty = c(1, 2), lwd = c(1.5, 2))
+
+# 3. Histograma de la muestra más grande (n = 10,000) con la PDF teórica
+hist(muestra_max, probability = TRUE, breaks = 40, col = "lightgray", border = "white",
+     main = "Histograma de la Muestra (n = 10,000) y PDF Teórica Beta(2,5)",
+     xlab = "x", ylab = "Densidad")
+
+# Superponer curva teórica de la densidad Beta(2,5)
+curve(dbeta(x, shape1 = alpha, shape2 = beta), 
+      col = "purple", lwd = 2.5, add = TRUE)
+legend("topright", legend = c("PDF Teórica Beta(2,5)"), col = "purple", lwd = 2.5)
+```
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
